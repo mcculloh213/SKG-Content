@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="menu_fab_invert" type="id" />
+    <item name="menu_fab_zoom_in" type="id" />
+    <item name="menu_fab_zoom_out" type="id" />
+    <item name="is_color_inverted" type="id" />
+    <item name="menu_fab_freeze" type="id" />
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="label_zoom_level">Zoom Level:</string>
+    <string name="save_content_label">Save Content</string>
+    <string name="menu_sync_content">Sync Content</string>
+    <string name="hf_save_content">hf_no_number|hf_show_text|hf_orientation:bottom|Save Content</string>
+    <string name="hf_sync_content">hf_no_number|hf_show_text|hf_orientation:bottom|Sync Content</string>
+</resources>

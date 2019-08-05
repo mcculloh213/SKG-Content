@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:layout_margin="@dimen/layout_margin_medium"
+    app:cardElevation="@dimen/layout_elevation_small"
+    app:cardCornerRadius="@dimen/corner_radius_medium">
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/layout_margin_medium"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.Core.Headline6"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="List Item Title"/>
+</com.google.android.material.card.MaterialCardView>

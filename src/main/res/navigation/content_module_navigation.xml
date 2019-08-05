@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_module_navigation"
+    app:startDestination="@id/index">
+    <fragment
+        android:id="@+id/index"
+        android:label="Content"
+        android:name="ktx.sovereign.content.fragment.ContentIndexFragment"
+        tools:layout="@layout/fragment_content_list">
+        <action
+            android:id="@+id/action_index_to_detail"
+            app:destination="@id/detail"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@+id/index"/>
+    </fragment>
+    <fragment
+        android:id="@+id/detail"
+        android:label="Content"
+        tools:layout="@layout/fragment_content_detail"
+        android:name="ktx.sovereign.content.fragment.ContentDetailFragment"/>
+</navigation>
