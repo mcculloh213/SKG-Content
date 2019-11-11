@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/menu_search"
+        android:contentDescription="@string/hf_menu_search"
+        android:orderInCategory="100"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|withText"/>
+    <item
+        android:id="@+id/menu_sync"
+        android:icon="@drawable/ic_sync"
+        android:title="@string/menu_sync_content"
+        android:contentDescription="@string/hf_sync_content"
+        android:orderInCategory="110"
+        app:showAsAction="ifRoom"/>
+</menu>

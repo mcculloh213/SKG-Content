@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/layout_margin_medium"
+    android:padding="@dimen/layout_margin_small"
+    app:cardElevation="@dimen/layout_elevation_medium"
+    app:cardCornerRadius="@dimen/corner_radius_medium">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_medium">
+
+        <ImageView
+            android:id="@+id/ivMicroCredential"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/layout_margin_medium"
+            android:src="@drawable/icon_micro_credential"
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/layout_margin_medium"
+            android:layout_toEndOf="@+id/ivMicroCredential"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Base.Headline6"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="List Item Title" />
+
+        <TextView
+            android:id="@+id/tvIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/background_indicator"
+            android:padding="4dp"
+            android:text="Downloaded"
+            android:textColor="@color/avenir_white"
+            android:visibility="gone" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

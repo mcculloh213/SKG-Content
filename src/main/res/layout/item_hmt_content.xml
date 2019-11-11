@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="75dp">
+    <include layout="@layout/item_content"
+        android:id="@+id/mobile_view"/>
+    <TextView
+        android:id="@+id/tv_content_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin_small"
+        android:textAppearance="@style/TextAppearance.Base.Caption"
+        android:textSize="@dimen/text_size_small"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        app:layout_constraintStart_toStartOf="@id/mobile_view"
+        app:layout_constraintTop_toBottomOf="@id/mobile_view"
+        app:layout_constraintEnd_toEndOf="@id/mobile_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        tools:text="Select Simple Item -1"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.ContentDetailFragment">
+
+    <androidx.viewpager.widget.ViewPager style="@style/Container.Base.Flex"
+        android:id="@+id/content_view_pager"
+        android:contentDescription="@string/hf_scroll_horizontal"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_divider" />
+
+    <FrameLayout style="@style/Container.Base.Flex"
+        android:paddingTop="@dimen/layout_padding_xsmall"
+        android:paddingBottom="@dimen/layout_padding_xsmall"
+        android:elevation="@dimen/layout_elevation_large"
+        android:clipToPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline_horizontal_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout style="@style/Container.Base"
+            xmlns:constraint="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView style="@style/Container.Base.Backdrop"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/label_zoom_level"
+                android:gravity="center"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textStyle="bold"
+                constraint:layout_constraintStart_toStartOf="parent"
+                constraint:layout_constraintTop_toTopOf="parent"
+                constraint:layout_constraintEnd_toStartOf="@id/guideline_inner_vertical_divider"
+                constraint:layout_constraintBottom_toBottomOf="parent"/>
+
+            <com.edutechnologic.industrialbadger.base.widget.ZoomLevelView style="@style/Container.Base.Backdrop"
+                xmlns:zoom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/zoom_level_indicator"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                constraint:layout_constraintStart_toEndOf="@id/guideline_inner_vertical_divider"
+                constraint:layout_constraintTop_toTopOf="parent"
+                constraint:layout_constraintEnd_toEndOf="parent"
+                constraint:layout_constraintBottom_toBottomOf="parent"
+                zoom:slots="10"
+                zoom:default_zoom_level="one"
+                zoom:min_zoom_level="one"
+                zoom:max_zoom_level="ten"/>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_inner_vertical_divider"
+                android:orientation="vertical"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                constraint:layout_constraintGuide_percent="0.225"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:id="@+id/control_page_left"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_gravity="start"
+            android:contentDescription="@string/hf_page_left"/>
+
+        <View
+            android:id="@+id/control_page_right"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_gravity="end"
+            android:contentDescription="@string/hf_page_right"/>
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_horizontal_divider"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintGuide_percent="0.935"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

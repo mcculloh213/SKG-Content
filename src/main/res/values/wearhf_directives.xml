@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- region Content List: Menu -->
+    <string name="hf_sync_content">hf_no_number|hf_show_text|hf_orientation:bottom|Sync Content</string>
+    <string name="hf_save_content">hf_no_number|hf_show_text|hf_orientation:bottom|Save Content</string>
+    <!-- endregion -->
+
+    <!-- region Content Detail Activity -->
+    <string name="hf_page_left">hf_no_number|hf_orientation:right|Page Left</string>
+    <string name="hf_page_right">hf_no_number|hf_orientation:left|Page Right</string>
+    <string name="hf_open_content_menu">hf_no_number|Content Menu</string>
+    <string name="hf_zoom_in">hf_no_number|Zoom In</string>
+    <string name="hf_zoom_out">hf_no_number|Zoom Out</string>
+    <string name="hf_invert_colors">hf_no_number|Invert Colors</string>
+    <string name="hf_hide_menu">hf_no_number|Close Menu</string>
+    <string name="hf_select_square">hf_no_number|Select Square</string>
+    <string name="hf_select_circle">hf_no_number|Select Circle</string>
+    <!-- endregion -->
+
+    <!-- region Content Detail Fragment -->
+    <string name="hf_page_up">hf_no_number|hf_show_text|Scroll Up</string>
+    <string name="hf_page_down">hf_no_number|hf_show_text|Scroll Down</string>
+    <!-- endregion -->
+</resources>

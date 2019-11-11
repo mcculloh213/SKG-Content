@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.DocumentListFragment">
+
+    <!-- region File Directory Structure -->
+    <LinearLayout style="@style/Container.Flex.Background.Inverse"
+        android:id="@+id/structure_background"
+        android:orientation="horizontal"
+        android:layout_height="45sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView style="@style/Widget.TextView.Light"
+        android:id="@+id/btn_directory_up"
+        android:layout_height="0sp"
+        android:layout_width="wrap_content"
+        android:padding="3sp"
+        android:drawableStart="@drawable/ic_arrow_up"
+        android:drawableTint="?android:attr/colorBackground"
+        android:text="@string/content_list_directory_up"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/structure_background"
+        app:layout_constraintBottom_toBottomOf="@id/structure_background" />
+
+    <TextView style="@style/Widget.TextView.Light"
+        android:id="@+id/directory_path"
+        android:layout_height="0sp"
+        android:layout_width="0sp"
+        android:layout_margin="5sp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/btn_directory_up"
+        app:layout_constraintTop_toTopOf="@id/structure_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/structure_background"
+        tools:text="~/"/>
+    <!-- endregion -->
+
+    <com.edutechnologic.industrialbadger.base.widget.EmptyRecyclerView style="@style/Container.Flex.Background.Inverse.Transparent"
+        android:id="@+id/recycler_view"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/structure_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:orientation="vertical"
+        tools:scrollbars="vertical"
+        tools:listitem="@layout/document_list_item"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:context=".fragments.ContentListFragment"
+        tools:visibility="visible" />
+
+    <TextView style="@style/Widget.TextView.Dark"
+        android:id="@+id/recycler_view_empty"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/structure_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="@string/content_list_empty"
+        tools:visibility="gone"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

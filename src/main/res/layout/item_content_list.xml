@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView style="@style/Widget.Content.CardView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout style="@style/Container.Base.Fit"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <TextView
+            android:id="@+id/content_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zero_dp"
+            android:layout_marginStart="@dimen/layout_margin_small"
+            android:layout_marginTop="@dimen/layout_margin_xsmall"
+            android:layout_marginEnd="@dimen/layout_margin_small"
+            android:layout_marginBottom="@dimen/layout_margin_xsmall"
+            android:textAppearance="@style/TextAppearance.Base.ListItem"
+            android:maxLines="2"
+            android:ellipsize="marquee"
+            android:gravity="start|center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/content_tag"
+            tools:text="THIS IS A TITLE"/>
+
+        <TextView
+            android:id="@+id/content_tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/layout_margin_small"
+            android:layout_marginTop="@dimen/layout_margin_xsmall"
+            android:layout_marginEnd="@dimen/layout_margin_small"
+            android:layout_marginBottom="@dimen/layout_margin_xsmall"
+            android:gravity="start|bottom"
+            android:textAppearance="@style/TextAppearance.Base.ListItem.Caption"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="THIS IS A DESCRIPTION"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

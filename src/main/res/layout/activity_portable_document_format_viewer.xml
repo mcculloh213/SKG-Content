@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PortableDocumentFormatViewerActivity">
+
+    <androidx.appcompat.widget.Toolbar style="@style/Widget.Base.Toolbar"
+        android:id="@+id/toolbar"
+        app:titleTextColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <FrameLayout style="@style/Container.Base.Flex"
+        android:id="@+id/secondary_toolbar"
+        android:layout_height="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/page_index"
+        android:layout_height="0sp"
+        android:layout_width="0sp"
+        android:layout_marginEnd="3sp"
+        android:gravity="end|center_vertical"
+        android:lines="1"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/secondary_toolbar"
+        app:layout_constraintEnd_toStartOf="@id/separator"
+        app:layout_constraintBottom_toBottomOf="@id/secondary_toolbar"
+        tools:text="Page: 1"/>
+
+    <TextView
+        android:id="@+id/separator"
+        android:layout_height="0sp"
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:lines="1"
+        android:textStyle="bold"
+        android:text="@string/separator_slash"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/secondary_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/secondary_toolbar"/>
+
+    <TextView
+        android:id="@+id/page_count"
+        android:layout_height="0sp"
+        android:layout_width="0sp"
+        android:layout_marginStart="3sp"
+        android:gravity="start|center_vertical"
+        android:lines="1"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/separator"
+        app:layout_constraintTop_toTopOf="@id/secondary_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/secondary_toolbar"
+        tools:text="20"/>
+
+    <com.github.barteksc.pdfviewer.PDFView style="@style/Container.Flex.Background.Inverse.Transparent"
+        android:id="@+id/pdf_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondary_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
