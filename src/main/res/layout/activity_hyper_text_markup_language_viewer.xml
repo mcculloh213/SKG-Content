@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HyperTextMarkupLanguageViewerActivity">
+
+    <androidx.appcompat.widget.Toolbar style="@style/Toolbar"
+        android:id="@+id/toolbar"
+        android:theme="@style/AppTheme.Toolbar"
+        app:popupTheme="@style/AppTheme.Toolbar.Popup"
+        app:titleTextColor="?android:attr/textColorPrimaryInverse"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button style="@style/Toolbar.Button.Action.Left"
+            android:id="@+id/close_view"
+            android:drawableTop="@drawable/ic_close"
+            android:drawableTint="?android:attr/colorBackground"
+            android:text="@string/pdf_viewer_close_label"
+            android:contentDescription="@string/pdf_viewer_close_content_description"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimaryInverse" />
+
+        <TextView style="@style/Widget.TextView.Light"
+            android:id="@+id/activity_title"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            tools:text="Some-Document.pdf"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <FrameLayout style="@style/Container.Flex"
+        android:contentDescription="@string/hf_no_overlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout style="@style/Container"
+            android:id="@+id/refresh_control">
+
+            <WebView
+                android:id="@+id/webview"
+                android:contentDescription="hf_scroll_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

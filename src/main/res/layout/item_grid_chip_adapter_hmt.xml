@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout style="@style/Container.Base.Fit"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="@dimen/layout_margin_small"
+    android:layout_height="wrap_content">
+
+    <include layout="@layout/item_grid_chip_adapter"
+        android:id="@+id/layout_grid_chip_adapter_item"/>
+
+    <TextView
+        android:id="@+id/item_wearhf_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/layout_padding_medium"
+        android:paddingEnd="@dimen/layout_padding_medium"
+        android:textColor="?android:attr/textColorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_grid_chip_adapter_item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="List Item: WearHF Label"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

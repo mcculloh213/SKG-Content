@@ -1,8 +1,54 @@
 <resources>
-    <string name="label_zoom_level">Zoom Level:</string>
-    <string name="save_content_label">Save Content</string>
-    <string name="menu_sync_content">Sync Content</string>
+    <string name="app_name">Content</string>
+
     <string name="hf_save_content">hf_no_number|hf_show_text|hf_orientation:bottom|Save Content</string>
     <string name="hf_sync_content">hf_no_number|hf_show_text|hf_orientation:bottom|Sync Content</string>
     <string name="action_open">Open…</string>
+
+    <!-- region Content List Fragment -->
+    <string name="content_list_empty">No files found in directory %1$s</string>
+    <string name="content_list_directory_up">Go Up</string>
+    <string name="hmt_content_list_item_open_descriptor">Select Item %1$d</string>
+    <string name="hmt_content_list_item_download_descriptor">Select or Download Item %1$d</string>
+    <!-- endregion -->
+
+    <!-- region Content List: Menu -->
+    <string name="menu_sync_content">Sync Content</string>
+    <!-- endregion -->
+
+    <!-- region Content FAB Menu -->
+    <string name="content_fab_menu_label">Content Menu</string>
+    <string name="content_zoom_in_label">Zoom In</string>
+    <string name="content_zoom_out_label">Zoom Out</string>
+    <string name="content_invert_color_label">Invert Colors</string>
+    <string name="content_close_menu">Close Menu</string>
+    <!-- endregion -->
+
+    <!-- region Content Search Fragment -->
+    <string name="content_search_header">%1$d Results for &quot;%2$s&quot;</string>
+    <string name="content_search_indicator_label">Loading…</string>
+    <!-- endregion -->
+
+    <!-- region Recycler View Item HF Tags -->
+    <string name="hf_content_list_open">hf_show_dot|Select Item %1$d</string>
+    <string name="hf_content_list_download">hf_show_dot|Download Item %1$d</string>
+    <!-- endregion -->
+
+    <!-- region Content Sync Dialog Fragment -->
+    <string name="content_sync_dialog_title">Sync Content?</string>
+    <!-- endregion -->
+
+    <!-- region PDF Viewer Activity -->
+    <string name="pdf_viewer_close_label">Close</string>
+    <string name="pdf_viewer_close_content_description">hf_show_dot|Close Document</string>
+    <!-- endregion -->
+
+    <string name="separator_slash"> / </string>
+
+    <!-- region Content Detail Fragment -->
+    <string name="label_zoom_level">Zoom Level:</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save_content_label">Save Content</string>
+    <!-- endregion -->
 </resources>
