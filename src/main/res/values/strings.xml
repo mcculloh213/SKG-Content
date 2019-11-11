@@ -4,4 +4,5 @@
     <string name="menu_sync_content">Sync Content</string>
     <string name="hf_save_content">hf_no_number|hf_show_text|hf_orientation:bottom|Save Content</string>
     <string name="hf_sync_content">hf_no_number|hf_show_text|hf_orientation:bottom|Sync Content</string>
+    <string name="action_open">Open…</string>
 </resources>

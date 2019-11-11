@@ -1,2 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="ktx.sovereign.content"/>
+    package="ktx.sovereign.content">
+
+    <application>
+        <activity android:name=".ui.pdf.BartekscPDFActivity"></activity>
+        <activity android:name=".ui.MuPDFActivity" />
+    </application>
+
+</manifest>
