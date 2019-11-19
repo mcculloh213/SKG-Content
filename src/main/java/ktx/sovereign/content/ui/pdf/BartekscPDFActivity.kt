@@ -24,6 +24,7 @@ import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle
 import com.github.barteksc.pdfviewer.util.FitPolicy
 import kotlinx.android.synthetic.main.activity_barteksc_pdf.*
 import ktx.sovereign.content.R
+import ktx.sovereign.core.controller.TiltScrollController
 import ktx.sovereign.core.util.LogMAR
 
 private const val REQUEST_GET_PDF = 42
@@ -33,6 +34,17 @@ class BartekscPDFActivity : AppCompatActivity() {
     private val viewmodel: BartekscPDFViewModel by lazy {
         ViewModelProvider(viewModelStore, BartekscPDFViewModel.Factory())
             .get(BartekscPDFViewModel::class.java)
+    }
+    private val gyroscope: TiltScrollController by lazy {
+        TiltScrollController(this@BartekscPDFActivity, object: TiltScrollController.TiltScrollListener {
+            override fun onTilt(x: Int, y: Int) {
+//                try {
+//                    pdf_view.moveRelativeTo(x.toFloat(), y.toFloat())
+//                } catch (ex: Exception) {
+//
+//                }
+            }
+        })
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +61,10 @@ class BartekscPDFActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.findItem(R.id.toggle_night_mode).isChecked = viewmodel.isNightModeEnabled
         return true
+    }
+    override fun onResume() {
+        super.onResume()
+        gyroscope.requestRotationSensor()
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -96,6 +112,10 @@ class BartekscPDFActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    override fun onPause() {
+        gyroscope.releaseRotationSensor()
+        super.onPause()
     }
 
     fun zoomIn(view: View) {

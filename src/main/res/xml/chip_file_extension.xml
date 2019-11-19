@@ -4,4 +4,4 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:textColor="?android:attr/textColorPrimaryInverse"
     app:checkedIconEnabled="true"
-    app:checkedIcon="@drawable/ic_check"/>
+    app:checkedIcon="@drawable/ic_file"/>

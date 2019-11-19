@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_freeze"
+        android:icon="@drawable/ic_freeze"
+        android:title="@string/action_freeze"
+        android:contentDescription="@string/hf_freeze"/>
+    <item android:id="@+id/action_invert_colors"
+        android:icon="@drawable/ic_invert_color"
+        android:title="@string/action_invert_color"
+        android:contentDescription="@string/hf_invert_colors"/>
+    <item android:id="@+id/action_zoom_in"
+        android:icon="@drawable/ic_zoom_in"
+        android:title="@string/action_zoom_in"
+        android:contentDescription="@string/hf_zoom_in"/>
+    <item android:id="@+id/action_zoom_out"
+        android:icon="@drawable/ic_zoom_out"
+        android:title="@string/action_zoom_out"
+        android:contentDescription="@string/hf_zoom_out"/>
+</menu>

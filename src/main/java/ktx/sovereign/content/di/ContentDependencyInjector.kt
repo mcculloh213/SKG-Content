@@ -1,13 +1,16 @@
 package ktx.sovereign.content.di
 
-import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProviders
 import ktx.sovereign.content.contract.ContentContract
-import ktx.sovereign.database.Database
-import ktx.sovereign.database.repository.ContentRepository
-import ktx.sovereign.database.repository.VolumeRepository
+import ktx.sovereign.content.ui.content.ContentViewModel
 
-class ContentDependencyInjector(context: Context) : ContentContract.DependencyInjection {
-    private val _db: Database = Database.getDatabase(context)
-    override fun injectVolumeRepository(): VolumeRepository = VolumeRepository(_db.VolumeDao())
-    override fun injectContentRepository(): ContentRepository = ContentRepository(_db.ContentDao())
+class ContentDependencyInjector(
+    private val activity: AppCompatActivity
+) : ContentContract.DependencyInjection {
+    private val _factory: ContentViewModel.Factory = ContentViewModel.Factory(activity)
+    override fun provideLifecycleOwner(): LifecycleOwner = activity
+    override fun provideViewModel(): ContentViewModel =
+        ViewModelProviders.of(activity, _factory)[ContentViewModel::class.java]
 }

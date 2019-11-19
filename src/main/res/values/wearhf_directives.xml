@@ -12,6 +12,7 @@
     <string name="hf_zoom_in">hf_no_number|Zoom In</string>
     <string name="hf_zoom_out">hf_no_number|Zoom Out</string>
     <string name="hf_invert_colors">hf_no_number|Invert Colors</string>
+    <string name="hf_freeze">hf_no_number|Freeze</string>
     <string name="hf_hide_menu">hf_no_number|Close Menu</string>
     <string name="hf_select_square">hf_no_number|Select Square</string>
     <string name="hf_select_circle">hf_no_number|Select Circle</string>

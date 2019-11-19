@@ -11,13 +11,14 @@ import ktx.sovereign.hmt.extension.isHMT
 
 class ContentItem(
     val volume: Volume,
-    val content: Content
+    val content: Content,
+    private val index: Int
 ) : Item() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         with (viewHolder.itemView) {
             tv_title.text = content.title.substringBeforeLast('.')
             if (isHMT()) {
-                val tag = "Select Content ${position+1}"
+                val tag = "Select Content ${index+1}"
                 val directive = "hf_no_number|hf_no_text|$tag"
                 tv_content_description.text = tag
                 contentDescription = directive

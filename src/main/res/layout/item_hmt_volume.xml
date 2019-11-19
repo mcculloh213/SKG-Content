@@ -11,7 +11,7 @@
         android:id="@+id/tv_content_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Base.Caption"
+        android:textAppearance="@style/TextAppearance.Core.Caption"
         android:textSize="@dimen/text_size_small"
         android:singleLine="true"
         android:ellipsize="marquee"

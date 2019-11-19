@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".fragment.ContentDetailFragment">
 
+    <ktx.sovereign.core.menu.FloatingActionMenuLayout
+        android:id="@+id/fab_action_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin_medium"
+        android:elevation="@dimen/layout_elevation_large"
+        app:optionsMenu="@menu/viewer_settings"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <androidx.viewpager.widget.ViewPager style="@style/Container.Flex"
         android:id="@+id/content_view_pager"
         android:contentDescription="@string/hf_scroll_horizontal"
@@ -17,8 +27,6 @@
         app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_divider" />
 
     <FrameLayout style="@style/Container.Flex"
-        android:paddingTop="@dimen/layout_padding_xsmall"
-        android:paddingBottom="@dimen/layout_padding_xsmall"
         android:clipToPadding="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline_horizontal_divider"
@@ -51,9 +59,9 @@
                 constraint:layout_constraintEnd_toEndOf="parent"
                 constraint:layout_constraintBottom_toBottomOf="parent"
                 zoom:slots="10"
-                zoom:default_zoom_level="one"
-                zoom:min_zoom_level="one"
-                zoom:max_zoom_level="ten"/>
+                zoom:default_slot_level="one"
+                zoom:min_slot_level="one"
+                zoom:max_slot_level="ten"/>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_inner_vertical_divider"

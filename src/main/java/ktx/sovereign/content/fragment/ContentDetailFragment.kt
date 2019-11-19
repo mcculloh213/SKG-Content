@@ -7,59 +7,39 @@ import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.*
-import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
+import androidx.core.math.MathUtils.clamp
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_content_detail.*
-import kotlinx.android.synthetic.main.item_webview.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ktx.hdmccullough.sensors.SensorFactory
+import ktx.hdmccullough.sensors.UnitCircle
+import ktx.hdmccullough.sensors.motion.RotationVector
+import ktx.sovereign.api.S3Client
 import ktx.sovereign.content.R
 import ktx.sovereign.content.contract.ContentContract
-import ktx.sovereign.core.controller.TiltScrollController
+import ktx.sovereign.content.view.ContentView
 import ktx.sovereign.core.util.LogMAR
-import ktx.sovereign.core.view.FloatingActionButtonMenu
+import ktx.sovereign.core.view.SlotView
 import ktx.sovereign.database.entity.Content
 import ktx.sovereign.hmt.SpeechRecognizer
-import kotlin.math.min
-import kotlin.math.roundToInt
+import ktx.sovereign.util.angularRounding
+import ktx.sovereign.util.threshold
+import ktx.sovereign.util.toDegrees
+import ktx.sovereign.util.toast
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ContentDetailFragment : ContentPresenterFragment() {
     companion object {
         @JvmStatic fun newInstance(): ContentDetailFragment = ContentDetailFragment()
         private val ARG_INDEX = "com.industrialbadger.content.detail.INDEX"
-        private val INVERT_COLORS = ("javascript: ("
-                + "function () { "
-
-                + "var css = 'html {-webkit-filter: invert(100%);' +"
-                + "    '-moz-filter: invert(100%);' + "
-                + "    '-o-filter: invert(100%);' + "
-                + "    '-ms-filter: invert(100%); }',"
-
-                + "head = document.getElementsByTagName('head')[0],"
-                + "style = document.createElement('style');"
-
-                + "if (!window.counter) { window.counter = 1;} else  { window.counter ++;"
-                + "if (window.counter % 2 == 0) { var css ='html {-webkit-filter: invert(0%); -moz-filter:    invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'}"
-                + "};"
-
-                + "style.type = 'text/css';"
-                + "if (style.styleSheet){"
-                + "style.styleSheet.cssText = css;"
-                + "} else {"
-                + "style.appendChild(document.createTextNode(css));"
-                + "}"
-
-                //injecting the css to the head
-                + "head.appendChild(style);"
-                + "}());")
     }
-    private val GET_SCROLLABLE_AREA: String = "javascript:ContentViewer.getScrollableArea(document.body.scrollHeight, document.body.scrollWidth)"
+
 
     /**
      * [LogMAR] utility to handle zoom & scale of [WebView] content.
@@ -69,90 +49,73 @@ class ContentDetailFragment : ContentPresenterFragment() {
      *      Infimum: 0.0f           - Disable ability to decrease text below x1 times
      *      Supremum: 0.9f          - Ability to enlarge text up to x8 times
      */
-    private val logmar: LogMAR = LogMAR(100.00f, supremum = 0.9f)
+    private val logmar: LogMAR = LogMAR(1.0f, supremum = 0.9f)
     private val adapter: ContentPagerAdapter = ContentPagerAdapter()
-    private val gyroscope: TiltScrollController by lazy {
-        TiltScrollController(requireContext(), object: TiltScrollController.TiltScrollListener {
-            override fun onTilt(x: Int, y: Int) {
-                with(adapter.getCurrentWebView(content_view_pager.currentItem)) {
-                    // width
-                    val dx = when {
-                        x > 0 -> if ((scrollX + x) > viewportWidth) {
-                            min((viewportWidth - scrollX), (viewportHeight - x)).roundToInt()
-                        } else x
-                        x < 0 -> if ((scrollX + x) < 0) (-1 * scrollX) else x
-                        else -> 0
+    private val tracking: AtomicBoolean = AtomicBoolean(false)
+    private val orientation: FloatArray = FloatArray(3)
+    private val azimuth: Float
+        get() = clamp(orientation[0], -1f * UnitCircle.RAD_180, UnitCircle.RAD_180).toDegrees()
+    private val pitch: Float
+        get() = clamp(orientation[1], -1f * UnitCircle.RAD_180, UnitCircle.RAD_180).toDegrees()
+    private val roll: Float
+        get() = clamp(orientation[2], -1f * UnitCircle.RAD_180 / 2f, UnitCircle.RAD_180 / 2f).toDegrees()
+
+    private var worldX: Float = 0f
+    private var worldZ: Float = 0f
+
+    private val sensor: RotationVector by lazy {
+        SensorFactory(requireContext()).get(RotationVector::class.java).also {
+            it.setOnSensorDataChangedListener {
+                synchronized(this@ContentDetailFragment) {
+                    sensor.adjustedOrientation.copyInto(orientation)
+                    val (a, p, r) = Triple(azimuth, pitch, roll)
+//                    Log.i("RotationVector", "<$a, $p, $r>")
+                    var (dx, dz) = Pair(
+                        (p - worldX).angularRounding().threshold(),
+                        (a - worldZ).angularRounding().threshold()
+                    )
+
+                    if (!tracking.get()) {
+                        dx = 0f
+                        dz = 0f
+                        tracking.set(true)
                     }
-                    // height
-                    val dy = when {
-                        y > 0 -> if ((scrollY + y) > viewportHeight) {
-                            min((viewportHeight - scrollY), (viewportHeight - y)).roundToInt()
-                        } else y
-                        y < 0 -> if ((scrollY + y) < 0) (-1 * scrollY) else y
-                        else -> 0
-                    }
-                    scrollBy(dx, dy)
+
+                    worldX = p
+                    worldZ = a
+                    adapter.getContentView(content_view_pager.currentItem).tilt(dz, dx)
                 }
             }
-        })
+        }
     }
     private val hmtSpeechRecognizer: SpeechRecognizer = SpeechRecognizer(SpeechRecognizer.CommandList(
         extraCommands = listOf(
-            "Freeze",
-            "Freeze Document",
-            "Invert",
-            "Invert Document",
-            "Toggle",
-            "Toggle Menu",
-            "Page Up",
-            "Page Right",
-            "Page Down",
-            "Page Left",
+            "Assessment",
+            "Freeze", "Freeze Document",
+            "Invert", "Invert Document",
+            "Toggle", "Toggle Menu", "Content Menu",
+            "Page Up", "Page Down",
+            "Next Page", "Page Right",
+            "Previous Page", "Page Left",
             "Zoom In",
-            "Zoom Out"
+            "Zoom Out",
+            "Zoom Level One",
+            "Zoom Level Two",
+            "Zoom Level Three",
+            "Zoom Level Four",
+            "Zoom Level Five",
+            "Zoom Level Six",
+            "Zoom Level Seven",
+            "Zoom Level Eight",
+            "Zoom Level Nine",
+            "Zoom Level Ten"
         )
     ))
     private var idx: Int = 0
-    private var viewportHeight: Float = 0f
-    private var viewportWidth: Float = 0f
-    private lateinit var menu: FloatingActionButtonMenu
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         hmtSpeechRecognizer.onAttach(context)
-        menu = FloatingActionButtonMenu(context).apply {
-            addButton(R.id.menu_fab_freeze, R.drawable.ic_freeze, "Freeze") {
-                gyroscope.toggleFreeze()
-            }
-            addButton(R.id.menu_fab_invert, R.drawable.ic_invert_color, "Invert") {
-                adapter.getCurrentWebView(content_view_pager.currentItem).apply {
-                    val inverted = getTag(R.id.is_color_inverted) as Boolean? ?: false
-                    loadUrl(INVERT_COLORS)
-                    setBackgroundColor(context.getColor(
-                        if (inverted) android.R.color.white else android.R.color.black
-                    ))
-                    setTag(R.id.is_color_inverted, !inverted)
-                }
-            }
-            addButton(R.id.menu_fab_zoom_in, R.drawable.ic_zoom_in, "Zoom In") {
-                adapter.getCurrentWebView(content_view_pager.currentItem).let { view ->
-                    view.settings.apply {
-                        slot_view.increaseZoomLevel()
-                        textZoom = logmar.stepUp().toInt()
-                    }
-                    view.loadUrl(GET_SCROLLABLE_AREA)
-                }
-            }
-            addButton(R.id.menu_fab_zoom_out, R.drawable.ic_zoom_out, "Zoom Out") {
-                adapter.getCurrentWebView(content_view_pager.currentItem).let { view ->
-                    view.settings.apply {
-                        slot_view.decreaseZoomLevel()
-                        textZoom = logmar.stepDown().toInt()
-                    }
-                    view.loadUrl(GET_SCROLLABLE_AREA)
-                }
-            }
-        }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
@@ -166,7 +129,17 @@ class ContentDetailFragment : ContentPresenterFragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        delegate?.createExtraMenu(menu)
+        fab_action_menu.apply {
+            setToggleClickListener(View.OnClickListener { close() })
+            setOnFloatingActionOptionItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.action_freeze -> toggleGyroscope()
+                    R.id.action_invert_colors -> invertColors()
+                    R.id.action_zoom_in -> zoomIn()
+                    R.id.action_zoom_out -> zoomOut()
+                }
+            }
+        }
         content_view_pager.apply {
             if (adapter == null) {
                 adapter = this@ContentDetailFragment.adapter
@@ -176,61 +149,63 @@ class ContentDetailFragment : ContentPresenterFragment() {
                 override fun onPageScrollStateChanged(state: Int) { }
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) { }
                 override fun onPageSelected(position: Int) {
-                    (adapter as ContentPagerAdapter?)?.getCurrentWebView(position)?.let {
-                        it.settings.textZoom = logmar.scale.roundToInt()
-                        it.loadUrl(GET_SCROLLABLE_AREA)
-                    }
+                    (adapter as ContentPagerAdapter?)?.getContentView(position)?.setScaleValue(slot_view.currentLevel)
                 }
             })
         }
     }
     override fun onResume() {
         super.onResume()
-        gyroscope.requestRotationSensor()
+        sensor.start()
         hmtSpeechRecognizer.onResume()
         slot_view.setOnClickSlotListener {
-            onClick = {
-                adapter.getCurrentWebView(content_view_pager.currentItem).let { view ->
-                    view.settings.apply {
-                        textZoom = logmar.stepTo(it).roundToInt()
-                    }
-                    view.loadUrl(GET_SCROLLABLE_AREA)
-                }
+            onClick = { slot ->
+                logmar.stepTo(slot)
+                adapter.getContentView(content_view_pager.currentItem).setScaleValue(slot)
             }
         }
         hmtSpeechRecognizer.setSpeechEventListener {
             onSpeechEvent = { command ->
                 when (command) {
-                    "Freeze", "Freeze Document" -> gyroscope.toggleFreeze()
-                    "Invert", "Invert Document" -> {
-                        adapter.getCurrentWebView(content_view_pager.currentItem).apply {
-                            val inverted = getTag(R.id.is_color_inverted) as Boolean? ?: false
-                            loadUrl(INVERT_COLORS)
-                            setBackgroundColor(context.getColor(
-                                if (inverted) android.R.color.white else android.R.color.black
-                            ))
-                            setTag(R.id.is_color_inverted, !inverted)
+                    "Assessment" -> {
+                        //TODO: Fix this.
+                        if (content_view_pager.currentItem == adapter.count - 1) {
+                            context?.packageManager?.getLaunchIntentForPackage(
+                                "com.augmentir.glass.runtime"
+                            )?.let { startActivity(it) }
                         }
                     }
-                    "Toggle", "Toggle Menu" -> menu.toggle()
-                    "Zoom In" -> {
-                        adapter.getCurrentWebView(content_view_pager.currentItem).let { view ->
-                            view.settings.apply {
-                                slot_view.increaseZoomLevel()
-                                textZoom = logmar.stepUp().toInt()
-                            }
-                            view.loadUrl(GET_SCROLLABLE_AREA)
+                    "Freeze", "Freeze Document" -> toggleGyroscope()
+                    "Invert", "Invert Document" -> invertColors()
+                    "Toggle", "Toggle Menu", "Content Menu" -> fab_action_menu.performClick()
+                    "Zoom In" -> zoomIn()
+                    "Zoom Out" -> zoomOut()
+                    "Next Page", "Page Right" -> {
+                        if (!adapter.getContentView(content_view_pager.currentItem).nextPage()) {
+                            content_view_pager.setCurrentItem(
+                                content_view_pager.currentItem + 1,
+                                true
+                            )
                         }
                     }
-                    "Zoom Out" -> {
-                        adapter.getCurrentWebView(content_view_pager.currentItem).let { view ->
-                            view.settings.apply {
-                                slot_view.decreaseZoomLevel()
-                                textZoom = logmar.stepDown().toInt()
-                            }
-                            view.loadUrl(GET_SCROLLABLE_AREA)
+                    "Previous Page", "Page Left" -> {
+                        if (!adapter.getContentView(content_view_pager.currentItem).previousPage()) {
+                            content_view_pager.setCurrentItem(
+                                content_view_pager.currentItem - 1,
+                                true
+                            )
                         }
                     }
+                    "Zoom Level One" -> zoomTo(SlotView.ZoomLevel.ONE)
+                    "Zoom Level Two" -> zoomTo(SlotView.ZoomLevel.TWO)
+                    "Zoom Level Three" -> zoomTo(SlotView.ZoomLevel.THREE)
+                    "Zoom Level Four" -> zoomTo(SlotView.ZoomLevel.FOUR)
+                    "Zoom Level Five" -> zoomTo(SlotView.ZoomLevel.FIVE)
+                    "Zoom Level Six" -> zoomTo(SlotView.ZoomLevel.SIX)
+                    "Zoom Level Seven" -> zoomTo(SlotView.ZoomLevel.SEVEN)
+                    "Zoom Level Eight" -> zoomTo(SlotView.ZoomLevel.EIGHT)
+                    "Zoom Level Nine" -> zoomTo(SlotView.ZoomLevel.NINE)
+                    "Zoom Level Ten" -> zoomTo(SlotView.ZoomLevel.TEN)
                 }
             }
         }
@@ -250,7 +225,7 @@ class ContentDetailFragment : ContentPresenterFragment() {
         super.onSaveInstanceState(outState)
     }
     override fun onPause() {
-        gyroscope.releaseRotationSensor()
+        sensor.stop()
         hmtSpeechRecognizer.onPause()
         super.onPause()
     }
@@ -261,10 +236,34 @@ class ContentDetailFragment : ContentPresenterFragment() {
     }
 
     override fun displayState(state: ContentContract.State) {
-        adapter.setContent(state.getCurrentContent())
         idx = state.getCurrentIndex()
+        adapter.setContent(state.getCurrentContent())
+        content_view_pager.currentItem = idx
     }
-
+    private fun toggleGyroscope() = with(sensor) {
+        if (listening) { stop() } else { start() }
+    }
+    private fun invertColors() = adapter.getContentView(content_view_pager.currentItem).invertColors()
+    private fun zoomIn() {
+        if (adapter.getContentView(content_view_pager.currentItem).zoomIn()) {
+            slot_view.increaseZoomLevel()
+        } else {
+            context?.toast("At Max")
+        }
+    }
+    private fun zoomOut() {
+        if (adapter.getContentView(content_view_pager.currentItem).zoomOut()) {
+            slot_view.decreaseZoomLevel()
+        } else {
+            context?.toast("At Min")
+        }
+    }
+    private fun zoomTo(level: SlotView.ZoomLevel) {
+        slot_view.setCurrentZoomLevel(level)
+        logmar.stepTo(level.value)
+        adapter.getContentView(content_view_pager.currentItem)
+            .setScaleValue(level.value)
+    }
     private fun handleSave(content: Content) {
         CoroutineScope(Dispatchers.IO).launch {
             val success = presenter?.onSaveClickedAsync(content)?.await() ?: false
@@ -273,7 +272,7 @@ class ContentDetailFragment : ContentPresenterFragment() {
                     if (success) {
                         Snackbar.make(it, "Saved ${content.title.substringBeforeLast('.')}", Snackbar.LENGTH_SHORT).apply {
                             val tv = TypedValue()
-                            context.theme.resolveAttribute(R.attr.colorSecondary, tv, true)
+                            context.theme.resolveAttribute(R.attr.colorPrimary, tv, true)
                             view.setBackgroundColor(tv.data)
                         }.show()
                     } else {
@@ -290,54 +289,30 @@ class ContentDetailFragment : ContentPresenterFragment() {
 
     inner class ContentPagerAdapter : PagerAdapter() {
         private val content: ArrayList<Content> = ArrayList()
-        private val textMap: HashMap<String, String?> = HashMap()
-        private val registeredViews: SparseArray<View> = SparseArray()
+        private val registeredViews: SparseArray<ContentView> = SparseArray()
         fun setContent(values: List<Content>) {
             content.clear()
             content.addAll(values)
             notifyDataSetChanged()
         }
 
-        fun getCurrentWebView(position: Int): WebView = registeredViews[position].webview
+        fun getContentView(position: Int): ContentView = registeredViews[position]
         fun getCurrentContent(position: Int): Content = content[position]
-        fun getCurrentText(position: Int): String? = textMap[content[position].id]
 
         @SuppressLint("SetJavaScriptEnabled")
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val view = LayoutInflater.from(container.context)
-                .inflate(R.layout.item_webview, container, false)
-            view.apply {
-                webview.visibility = View.INVISIBLE
-                progress.visibility = View.VISIBLE
-                webview.webViewClient = object : WebViewClient() {
-                    override fun onPageFinished(view: WebView?, url: String?) {
-                        progress.visibility = View.GONE
-                        view?.apply {
-                            visibility = View.VISIBLE
-                            loadUrl(GET_SCROLLABLE_AREA)
-                        }
+            val c = content[position]
+            val view: ContentView = ContentView.Factory().build(container.context, c)
+            CoroutineScope(Dispatchers.Main).launch {
+                with (c) {
+                    try {
+                        view.load(S3Client.url("edutechnologic.motoman", token, title))
+                    } catch (ex: Exception) {
+//                        webview.loadData(payload, "text/html; charset=utf-8", "UTF-8")
                     }
                 }
-                webview.settings.apply {
-                    javaScriptEnabled = true
-                    textZoom = logmar.scale.roundToInt()
-//                    loadWithOverviewMode = true
-//                    useWideViewPort = true
-                }
-                webview.setTag(R.id.is_color_inverted, false)
-                webview.addJavascriptInterface(ContentViewerInterface(), "ContentViewer")
-                CoroutineScope(Dispatchers.Main).launch {
-                    with (content[position]) {
-                        var payload = textMap[id]
-                        if (payload == null) {
-                            payload = presenter?.requestRead(this)
-                        }
-                        webview.loadData(payload, "text/html; charset=utf-8", "UTF-8")
-                        textMap[id] = payload
-                    }
-                }
-                registeredViews.put(position, this)
             }
+            registeredViews.put(position, view)
             container.addView(view)
             return view
         }
@@ -348,14 +323,6 @@ class ContentDetailFragment : ContentPresenterFragment() {
         override fun getCount(): Int = content.size
         override fun isViewFromObject(view: View, `object`: Any): Boolean {
             return view == `object`
-        }
-    }
-    inner class ContentViewerInterface {
-        @JavascriptInterface
-        fun getScrollableArea(height: Float, width: Float) {
-//            Log.d("Interface", "(x,y) := ($width, $height)")
-            viewportHeight = height
-            viewportWidth = width
         }
     }
 }
